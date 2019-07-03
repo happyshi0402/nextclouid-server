@@ -17,7 +17,7 @@
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="theme-color" content="<?php p($theme->getColorPrimary()); ?>">
 		<link rel="icon" href="<?php print_unescaped(image_path($_['appid'], 'favicon.ico')); /* IE11+ supports png */ ?>">
-		<link rel="apple-touch-icon-precomposed" href="<?php print_unescaped(image_path($_['appid'], 'favicon-touch.png')); ?>">
+		<link rel="apple-touch-icon" href="<?php print_unescaped(image_path($_['appid'], 'favicon-touch.png')); ?>">
 		<link rel="mask-icon" sizes="any" href="<?php print_unescaped(image_path($_['appid'], 'favicon-mask.svg')); ?>" color="<?php p($theme->getColorPrimary()); ?>">
 		<link rel="manifest" href="<?php print_unescaped(image_path($_['appid'], 'manifest.json')); ?>">
 		<?php emit_css_loading_tags($_); ?>
@@ -105,7 +105,7 @@
 						<?php p($l->t('Search'));?>
 					</label>
 					<input id="searchbox" type="search" name="query"
-						value="" required class="hidden icon-search-white"
+						value="" required class="hidden icon-search-white icon-search-force-white"
 						autocomplete="off">
 					<button class="icon-close-white" type="reset"><span class="hidden-visually"><?php p($l->t('Reset search'));?></span></button>
 				</form>

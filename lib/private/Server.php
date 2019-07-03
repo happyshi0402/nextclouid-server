@@ -128,7 +128,6 @@ use OCA\Theming\ThemingDefaults;
 
 use OCP\Accounts\IAccountManager;
 use OCP\App\IAppManager;
-use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Contacts\ContactsMenu\IContactsStore;
 use OCP\Dashboard\IDashboardManager;
@@ -158,7 +157,6 @@ use OCP\Remote\IInstanceFactory;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\IContentSecurityPolicyManager;
 use OCP\Share\IShareHelper;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -426,10 +424,9 @@ class Server extends ServerContainer implements IServerContainer {
 			$userSession->listen('\OC\User', 'logout', function () {
 				\OC_Hook::emit('OC_User', 'logout', array());
 			});
-			$userSession->listen('\OC\User', 'changeUser', function ($user, $feature, $value, $oldValue) use ($dispatcher) {
+			$userSession->listen('\OC\User', 'changeUser', function ($user, $feature, $value, $oldValue) {
 				/** @var $user \OC\User\User */
 				\OC_Hook::emit('OC_User', 'changeUser', array('run' => true, 'user' => $user, 'feature' => $feature, 'value' => $value, 'old_value' => $oldValue));
-				$dispatcher->dispatch('OCP\IUser::changeUser', new GenericEvent($user, ['feature' => $feature, 'oldValue' => $oldValue, 'value' => $value]));
 			});
 			return $userSession;
 		});
@@ -552,6 +549,7 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerAlias('AvatarManager', AvatarManager::class);
 
 		$this->registerAlias(\OCP\Support\CrashReport\IRegistry::class, \OC\Support\CrashReport\Registry::class);
+		$this->registerAlias(\OCP\Support\Subscription\IRegistry::class, \OC\Support\Subscription\Registry::class);
 
 		$this->registerService(\OC\Log::class, function (Server $c) {
 			$logType = $c->query('AllConfig')->getSystemValue('log_type', 'file');
@@ -989,11 +987,9 @@ class Server extends ServerContainer implements IServerContainer {
 				$c->getLogger()
 			);
 		});
-		$this->registerService(EventDispatcher::class, function () {
-			return new EventDispatcher();
-		});
-		$this->registerAlias('EventDispatcher', EventDispatcher::class);
-		$this->registerAlias(EventDispatcherInterface::class, EventDispatcher::class);
+		$this->registerAlias(\OCP\EventDispatcher\IEventDispatcher::class, \OC\EventDispatcher\EventDispatcher::class);
+		$this->registerAlias('EventDispatcher', \OC\EventDispatcher\SymfonyAdapter::class);
+		$this->registerAlias(EventDispatcherInterface::class, \OC\EventDispatcher\SymfonyAdapter::class);
 
 		$this->registerService('CryptoWrapper', function (Server $c) {
 			// FIXME: Instantiiated here due to cyclic dependency
@@ -1093,7 +1089,7 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerService('SettingsManager', function (Server $c) {
 			$manager = new \OC\Settings\Manager(
 				$c->getLogger(),
-				$c->getL10N('lib'),
+				$c->getL10NFactory(),
 				$c->getURLGenerator(),
 				$c
 			);
@@ -1256,6 +1252,11 @@ class Server extends ServerContainer implements IServerContainer {
 			$feature = $e->getArgument('feature');
 			$oldValue = $e->getArgument('oldValue');
 			$value = $e->getArgument('value');
+
+			// We only change the avatar on display name changes
+			if ($feature !== 'displayName') {
+				return;
+			}
 
 			try {
 				$avatar = $manager->getAvatar($user->getUID());
@@ -1853,7 +1854,7 @@ class Server extends ServerContainer implements IServerContainer {
 	 * @since 8.2.0
 	 */
 	public function getEventDispatcher() {
-		return $this->query('EventDispatcher');
+		return $this->query(\OC\EventDispatcher\SymfonyAdapter::class);
 	}
 
 	/**

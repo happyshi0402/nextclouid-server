@@ -23,6 +23,7 @@
 
 namespace Tests\Settings;
 
+use function get_class;
 use OC\Settings\Admin\Sharing;
 use OC\Settings\Manager;
 use OC\Settings\Mapper;
@@ -33,6 +34,9 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IServerContainer;
 use OCP\IURLGenerator;
+use OCP\L10N\IFactory;
+use OCP\Settings\ISettings;
+use OCP\Settings\ISubAdminSettings;
 use Test\TestCase;
 
 class ManagerTest extends TestCase {
@@ -43,6 +47,8 @@ class ManagerTest extends TestCase {
 	private $logger;
 	/** @var IDBConnection|\PHPUnit_Framework_MockObject_MockObject */
 	private $l10n;
+	/** @var IFactory|\PHPUnit_Framework_MockObject_MockObject */
+	private $l10nFactory;
 	/** @var IURLGenerator|\PHPUnit_Framework_MockObject_MockObject */
 	private $url;
 	/** @var IServerContainer|\PHPUnit_Framework_MockObject_MockObject */
@@ -53,18 +59,24 @@ class ManagerTest extends TestCase {
 
 		$this->logger = $this->createMock(ILogger::class);
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->container = $this->createMock(IServerContainer::class);
 
 		$this->manager = new Manager(
 			$this->logger,
-			$this->l10n,
+			$this->l10nFactory,
 			$this->url,
 			$this->container
 		);
 	}
 
 	public function testGetAdminSections() {
+		$this->l10nFactory
+			->expects($this->once())
+			->method('get')
+			->with('lib')
+			->willReturn($this->l10n);
 		$this->l10n
 			->expects($this->any())
 			->method('t')
@@ -95,6 +107,11 @@ class ManagerTest extends TestCase {
 	}
 
 	public function testGetPersonalSections() {
+		$this->l10nFactory
+			->expects($this->once())
+			->method('get')
+			->with('lib')
+			->willReturn($this->l10n);
 		$this->l10n
 			->expects($this->any())
 			->method('t')
@@ -119,6 +136,11 @@ class ManagerTest extends TestCase {
 	}
 
 	public function testGetAdminSectionsEmptySection() {
+		$this->l10nFactory
+			->expects($this->once())
+			->method('get')
+			->with('lib')
+			->willReturn($this->l10n);
 		$this->l10n
 			->expects($this->any())
 			->method('t')
@@ -146,6 +168,11 @@ class ManagerTest extends TestCase {
 	}
 
 	public function testGetPersonalSectionsEmptySection() {
+		$this->l10nFactory
+			->expects($this->once())
+			->method('get')
+			->with('lib')
+			->willReturn($this->l10n);
 		$this->l10n
 			->expects($this->any())
 			->method('t')
@@ -183,6 +210,35 @@ class ManagerTest extends TestCase {
 		], $settings);
 	}
 
+	public function testGetAdminSettingsAsSubAdmin() {
+		$section = $this->createMock(Sharing::class);
+		$this->container->expects($this->once())
+			->method('query')
+			->with(Sharing::class)
+			->willReturn($section);
+
+		$settings = $this->manager->getAdminSettings('sharing', true);
+
+		$this->assertEquals([], $settings);
+	}
+
+	public function testGetSubAdminSettingsAsSubAdmin() {
+		$section = $this->createMock(ISubAdminSettings::class);
+		$section->expects($this->once())
+			->method('getPriority')
+			->willReturn(13);
+		$this->container->expects($this->once())
+			->method('query')
+			->with(Sharing::class)
+			->willReturn($section);
+
+		$settings = $this->manager->getAdminSettings('sharing', true);
+
+		$this->assertEquals([
+			13 => [$section]
+		], $settings);
+	}
+
 	public function testGetPersonalSettings() {
 		$section = $this->createMock(Security::class);
 		$section->expects($this->once())
@@ -201,6 +257,11 @@ class ManagerTest extends TestCase {
 	}
 
 	public function testSameSectionAsPersonalAndAdmin() {
+		$this->l10nFactory
+			->expects($this->once())
+			->method('get')
+			->with('lib')
+			->willReturn($this->l10n);
 		$this->l10n
 			->expects($this->any())
 			->method('t')

@@ -31,6 +31,7 @@ namespace OCA\Files\Controller;
 use OCA\Files\Activity\Helper;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -135,10 +136,15 @@ class ViewController extends Controller {
 	 *
 	 * @param string $fileid
 	 * @return TemplateResponse|RedirectResponse
+	 * @throws NotFoundException
 	 */
 	public function showFile(string $fileid = null): Response {
 		// This is the entry point from the `/f/{fileid}` URL which is hardcoded in the server.
-		return $this->redirectToFile($fileid);
+		try {
+			return $this->redirectToFile($fileid);
+		} catch (NotFoundException $e) {
+			return new RedirectResponse($this->urlGenerator->linkToRoute('files.view.index', ['fileNotFound' => true]));
+		}
 	}
 
 	/**
@@ -148,7 +154,9 @@ class ViewController extends Controller {
 	 * @param string $dir
 	 * @param string $view
 	 * @param string $fileid
+	 * @param bool $fileNotFound
 	 * @return TemplateResponse|RedirectResponse
+	 * @throws NotFoundException
 	 */
 	public function index($dir = '', $view = '', $fileid = null, $fileNotFound = false) {
 		if ($fileid !== null) {
@@ -222,7 +230,7 @@ class ViewController extends Controller {
 
 		$nav->assign('navigationItems', $navItems);
 
-		$nav->assign('usage', \OC_Helper::humanFileSize($storageInfo['used']));
+		$nav->assign('usage', \OC_Helper::humanFileSize(ceil($storageInfo['used'] / 102400) * 102400));
 		if ($storageInfo['quota'] === \OCP\Files\FileInfo::SPACE_UNLIMITED) {
 			$totalSpace = $this->l10n->t('Unlimited');
 		} else {

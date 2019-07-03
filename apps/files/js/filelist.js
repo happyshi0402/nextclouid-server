@@ -652,8 +652,6 @@
 			});
 
 			this.breadcrumb._resize();
-
-			this.$table.find('>thead').width($('#app-content').width() - OC.Util.getScrollBarWidth());
 		},
 
 		/**
@@ -897,7 +895,16 @@
 		 * Event handler for when selecting/deselecting all files
 		 */
 		_onClickSelectAll: function(e) {
-			var checked = $(e.target).prop('checked');
+			var hiddenFiles = this.$fileList.find('tr.hidden');
+			var checked = e.target.checked;
+
+			if (hiddenFiles.length > 0) {
+				// set indeterminate alongside checked
+				e.target.indeterminate = checked;
+			} else {
+				e.target.indeterminate = false
+			}
+
 			// Select only visible checkboxes to filter out unmatched file in search
 			this.$fileList.find('td.selection > .selectCheckBox:visible').prop('checked', checked)
 				.closest('tr').toggleClass('selected', checked);
@@ -907,7 +914,7 @@
 					// a search will automatically hide the unwanted rows
 					// let's only select the matches
 					var fileData = this.files[i];
-					var fileRow = this.$fileList.find('[data-id=' + fileData.id + ']');
+					var fileRow = this.$fileList.find('tr[data-id=' + fileData.id + ']');
 					// do not select already selected ones
 					if (!fileRow.hasClass('hidden') && _.isUndefined(this._selectedFiles[fileData.id])) {
 						this._selectedFiles[fileData.id] = fileData;
@@ -917,7 +924,6 @@
 			} else {
 				// if we have some hidden row, then we're in a search
 				// Let's only deselect the visible ones
-				var hiddenFiles = this.$fileList.find('tr.hidden');
 				if (hiddenFiles.length > 0) {
 					var visibleFiles = this.$fileList.find('tr:not(.hidden)');
 					var self = this;
@@ -1135,7 +1141,7 @@
 			}
 			title += this.appName;
 			// Sets the page title with the " - Nextcloud" suffix as in templates
-			window.document.title = title + ' - ' + oc_defaults.title;
+			window.document.title = title + ' - ' + OC.theme.title;
 
 			return true;
 		},
@@ -2030,7 +2036,7 @@
 			this.breadcrumb.setDirectoryInfo(this.dirInfo);
 
 			if (this.dirInfo.permissions) {
-				this.setDirectoryPermissions(this.dirInfo.permissions);
+				this._updateDirectoryPermissions();
 			}
 
 			result.sort(this._sortComparator);
@@ -2181,12 +2187,9 @@
 			img.src = previewURL;
 		},
 
-		/**
-		 * @deprecated
-		 */
-		setDirectoryPermissions: function(permissions) {
-			var isCreatable = (permissions & OC.PERMISSION_CREATE) !== 0;
-			this.$el.find('#permissions').val(permissions);
+		_updateDirectoryPermissions: function() {
+			var isCreatable = (this.dirInfo.permissions & OC.PERMISSION_CREATE) !== 0 && this.$el.find('#free_space').val() !== '0';
+			this.$el.find('#permissions').val(this.dirInfo.permissions);
 			this.$el.find('.creatable').toggleClass('hidden', !isCreatable);
 			this.$el.find('.notCreatable').toggleClass('hidden', isCreatable);
 		},
@@ -3260,11 +3263,15 @@
 		},
 
 		/**
-		 * Returns whether all files are selected
-		 * @return true if all files are selected, false otherwise
+		 * Are all files selected?
+		 * 
+		 * @returns {Boolean} all files are selected
 		 */
 		isAllSelected: function() {
-			return this.$el.find('.select-all').prop('checked');
+			var checkbox = this.$el.find('.select-all')
+			var checked = checkbox.prop('checked')
+			var indeterminate = checkbox.prop('indeterminate')
+			return checked && !indeterminate;
 		},
 
 		/**
@@ -3340,6 +3347,7 @@
 					&& !self.$el.is(dropTarget) // dropped on list directly
 					&& !self.$el.has(dropTarget).length // dropped inside list
 					&& !dropTarget.is(self.$container) // dropped on main container
+					&& !self.$el.parent().is(dropTarget) // drop on the parent container (#app-content) since the main container might not have the full height
 					) {
 					e.preventDefault();
 					return false;
@@ -3515,9 +3523,9 @@
 			var _this = this;
 			var $scrollContainer = this.$container;
 			if ($scrollContainer[0] === window) {
-				// need to use "body" to animate scrolling
+				// need to use "html" to animate scrolling
 				// when the scroll container is the window
-				$scrollContainer = $('body');
+				$scrollContainer = $('html');
 			}
 			$scrollContainer.animate({
 				// Scrolling to the top of the new element

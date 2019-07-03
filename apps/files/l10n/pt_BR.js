@@ -83,7 +83,7 @@ OC.L10N.register(
     "_matches '{filter}'_::_match '{filter}'_" : ["coincide com '{filter}'","coincide com '{filter}'"],
     "View in folder" : "Exibir na pasta",
     "Copied!" : "Copiado!",
-    "Copy direct link (only works for users who have access to this file/folder)" : "Copiar link direto (somente funciona para usuários que tem acesso a este arquivo/pasta)",
+    "Copy direct link (only works for users who have access to this file/folder)" : "Copiar link direto (funciona apenas para usuários que tem acesso a este arquivo/pasta)",
     "Path" : "Caminho",
     "_%n byte_::_%n bytes_" : ["%n byte","%n bytes"],
     "Favorited" : "Favoritado",
@@ -135,11 +135,11 @@ OC.L10N.register(
     "Unlimited" : "Ilimitado",
     "Upload (max. %s)" : "Envio (max. %s)",
     "File Management" : "Gerenciamento de Arquivos",
-    "%s of %s used" : "%s de %s usado",
-    "%1$s%% of %2$s used" : "%1$s%% de %2$s usados",
     "%s used" : "%s usado",
+    "%s%% of %s used" : "%s%% usados de %s",
+    "%1$s of %2$s used" : "%1$s usado de %2$s",
     "Settings" : "Configurações",
-    "Show hidden files" : "Mostrar arquivos ocultos",
+    "Show hidden files" : "Exibir arquivos ocultos",
     "WebDAV" : "WebDAV",
     "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Use este endereço para <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">acessar seus arquivos via WebDAV</a>",
     "Toggle grid view" : "Alternar vista de grade",
@@ -167,7 +167,8 @@ OC.L10N.register(
     "Save" : "Salvar",
     "With PHP-FPM it might take 5 minutes for changes to be applied." : "Com PHP-FPM pode demorar 5 minutos para que as alterações sejam aplicadas.",
     "Missing permissions to edit from here." : "Faltando permissões para editar aqui.",
+    "%s of %s used" : "%s de %s usado",
     "Cancel upload" : "Cancelar envio",
-    "%1$s of %2$s used" : "%1$s usado de %2$s"
+    "%1$s%% of %2$s used" : "%1$s%% de %2$s usados"
 },
 "nplurals=2; plural=(n > 1);");

@@ -279,9 +279,9 @@ const actions = {
 	
 
 	getPasswordPolicyMinLength(context) {
-		if(oc_capabilities.password_policy && oc_capabilities.password_policy.minLength) {
-			context.commit('setPasswordPolicyMinLength', oc_capabilities.password_policy.minLength);
-			return oc_capabilities.password_policy.minLength;
+		if(OC.getCapabilities().password_policy && OC.getCapabilities().password_policy.minLength) {
+			context.commit('setPasswordPolicyMinLength', OC.getCapabilities().password_policy.minLength);
+			return OC.getCapabilities().password_policy.minLength;
 		}
 		return false;
 	},
@@ -429,7 +429,7 @@ const actions = {
 	addUser({commit, dispatch}, { userid, password, displayName, email, groups, subadmin, quota, language }) {
 		return api.requireAdmin().then((response) => {
 			return api.post(OC.linkToOCS(`cloud/users`, 2), { userid, password, displayName, email, groups, subadmin, quota, language })
-				.then((response) => dispatch('addUserData', userid))
+				.then((response) => dispatch('addUserData', userid || response.data.ocs.data.id))
 				.catch((error) => {throw error;});
 		}).catch((error) => {
 			commit('API_FAILURE', { userid, error });

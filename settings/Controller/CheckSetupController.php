@@ -123,7 +123,7 @@ class CheckSetupController extends Controller {
 	 * Checks if the server can connect to the internet using HTTPS and HTTP
 	 * @return bool
 	 */
-	private function isInternetConnectionWorking() {
+	private function hasInternetConnectivityProblems(): bool {
 		if ($this->config->getSystemValue('has_internet_connection', true) === false) {
 			return false;
 		}
@@ -134,10 +134,10 @@ class CheckSetupController extends Controller {
 
 		foreach($siteArray as $site) {
 			if ($this->isSiteReachable($site)) {
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -413,10 +413,6 @@ Raw output
 			return false;
 		}
 
-		if(!$iniWrapper->getBool('opcache.enable_cli')) {
-			return false;
-		}
-
 		if($iniWrapper->getNumeric('opcache.max_accelerated_files') < 10000) {
 			return false;
 		}
@@ -574,7 +570,7 @@ Raw output
 	protected function hasRecommendedPHPModules(): array {
 		$recommendedPHPModules = [];
 
-		if (!function_exists('grapheme_strlen')) {
+		if (!extension_loaded('intl')) {
 			$recommendedPHPModules[] = 'intl';
 		}
 
@@ -674,7 +670,7 @@ Raw output
 				'suggestedOverwriteCliURL' => $this->getSuggestedOverwriteCliURL(),
 				'cronInfo' => $this->getLastCronInfo(),
 				'cronErrors' => $this->getCronErrors(),
-				'serverHasInternetConnection' => $this->isInternetConnectionWorking(),
+				'serverHasInternetConnectionProblems' => $this->hasInternetConnectivityProblems(),
 				'isMemcacheConfigured' => $this->isMemcacheConfigured(),
 				'memcacheDocs' => $this->urlGenerator->linkToDocs('admin-performance'),
 				'isRandomnessSecure' => $this->isRandomnessSecure(),

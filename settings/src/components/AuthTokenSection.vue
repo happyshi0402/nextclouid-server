@@ -26,16 +26,29 @@
 		<AuthTokenList :tokens="tokens"
 					   @toggleScope="toggleTokenScope"
 					   @rename="rename"
-					   @delete="deleteToken"/>
+					   @delete="deleteToken"
+					   @wipe="wipeToken" />
 		<AuthTokenSetupDialogue :add="addNewToken" />
 	</div>
 </template>
 
 <script>
 	import Axios from 'nextcloud-axios';
+	import confirmPassword from 'nextcloud-password-confirmation';
 
 	import AuthTokenList from './AuthTokenList';
 	import AuthTokenSetupDialogue from './AuthTokenSetupDialogue';
+
+	const confirm = () => {
+		return new Promise(res => {
+			OC.dialogs.confirm(
+				t('core', 'Do you really want to wipe your data from this device?'),
+				t('core', 'Confirm wipe'),
+				res,
+				true
+			)
+		})
+	}
 
 	/**
 	 * Tap into a promise without losing the value
@@ -132,6 +145,25 @@
 						// Restore
 						this.tokens.push(token);
 					})
+			},
+			async wipeToken(token) {
+				console.debug('wiping app token', token);
+
+				try {
+					await confirmPassword()
+
+					if (!(await confirm())) {
+						console.debug('wipe aborted by user')
+						return;
+					}
+					await Axios.post(this.baseUrl + '/wipe/' + token.id)
+					console.debug('app token marked for wipe')
+
+					token.type = 2;
+				} catch (err) {
+					console.error('could not wipe app token', err);
+					OC.Notification.showTemporary(t('core', 'Error while wiping the device with the token'));
+				}
 			}
 		}
 	}

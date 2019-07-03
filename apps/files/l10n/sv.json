@@ -43,7 +43,7 @@
     "This directory is unavailable, please check the logs or contact the administrator" : "Denna katalog är inte tillgänglig, kontrollera loggarna eller kontakta administratören",
     "Could not move \"{file}\", target exists" : "Kunde inte flytta \"{file}\", filen existerar redan",
     "Could not move \"{file}\"" : "Kunde inte flytta \"{file}\"",
-    "copy" : "kopiera",
+    "copy" : "kopia",
     "Could not copy \"{file}\", target exists" : "Kunde inte kopiera \"{file}\", filen existerar redan",
     "Could not copy \"{file}\"" : "Kunde inte kopiera \"{file}\"",
     "Copied {origin} inside {destination}" : "Kopierade {origin} till {destination}",
@@ -133,9 +133,9 @@
     "Unlimited" : "Obegränsad",
     "Upload (max. %s)" : "Ladda upp (högst %s)",
     "File Management" : "Filhantering",
-    "%s of %s used" : "%s av %s använt",
-    "%1$s%% of %2$s used" : "%1$s%% av %2$s använt",
     "%s used" : "%s använt",
+    "%s%% of %s used" : "%s%% av %s använt",
+    "%1$s of %2$s used" : "%1$s av %2$s använt",
     "Settings" : "Inställningar",
     "Show hidden files" : "Visa dolda filer",
     "WebDAV" : "WebDAV",
@@ -157,7 +157,7 @@
     "Shared by link" : "Delad via länk",
     "Deleted shares" : "Raderade delningar",
     "Text file" : "Textfil",
-    "New text file.txt" : "nytextfil.txt",
+    "New text file.txt" : "Ny textfil.txt",
     "Target folder" : "Målmapp",
     "File handling" : "Filhantering",
     "Maximum upload size" : "Största storlek att ladda upp",
@@ -165,7 +165,8 @@
     "Save" : "Spara",
     "With PHP-FPM it might take 5 minutes for changes to be applied." : "Med PHP-FPM kan det ta cirka 5 minuter för ändringarna att träda i kraft.",
     "Missing permissions to edit from here." : "Saknar rättigheter att ändra härifrån.",
+    "%s of %s used" : "%s av %s använt",
     "Cancel upload" : "Avbryt uppladdning",
-    "%1$s of %2$s used" : "%1$s av %2$s använt"
+    "%1$s%% of %2$s used" : "%1$s%% av %2$s använt"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

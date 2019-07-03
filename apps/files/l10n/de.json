@@ -133,16 +133,16 @@
     "Unlimited" : "Unbegrenzt",
     "Upload (max. %s)" : "Hochladen (max. %s)",
     "File Management" : "Dateiverwaltung",
-    "%s of %s used" : "%s von %s verwendet",
-    "%1$s%% of %2$s used" : "%1$s%% von %2$s verwendet",
     "%s used" : "%s verwendet",
+    "%s%% of %s used" : "%s%% von %s verwendet",
+    "%1$s of %2$s used" : "%1$s von %2$s verwendet",
     "Settings" : "Einstellungen",
     "Show hidden files" : "Versteckte Dateien anzeigen",
     "WebDAV" : "WebDAV",
     "Use this address to <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">access your Files via WebDAV</a>" : "Diese Adresse benutzen, um <a href=\"%s\" target=\"_blank\" rel=\"noreferrer noopener\">über WebDAV auf Deine Dateien zuzugreifen</a>",
     "Toggle grid view" : "Rasteransicht umschalten",
     "No files in here" : "Keine Dateien vorhanden",
-    "Upload some content or sync with your devices!" : "Inhalte hochladen oder mit deinen Geräten synchronisieren!",
+    "Upload some content or sync with your devices!" : "Inhalte hochladen oder mit Deinen Geräten synchronisieren!",
     "No entries found in this folder" : "Keine Einträge in diesem Ordner gefunden",
     "Select all" : "Alle auswählen",
     "Upload too large" : "Der Upload ist zu groß",
@@ -165,7 +165,8 @@
     "Save" : "Speichern",
     "With PHP-FPM it might take 5 minutes for changes to be applied." : "Mit PHP-FPM kann es bis zu 5 Minuten dauern, bis die Einstellungen übernommen werden.",
     "Missing permissions to edit from here." : "Fehlende Berechtigungen, um dies von hier aus zu bearbeiten.",
+    "%s of %s used" : "%s von %s verwendet",
     "Cancel upload" : "Hochladen abbrechen",
-    "%1$s of %2$s used" : "%1$s von %2$s verwendet"
+    "%1$s%% of %2$s used" : "%1$s%% von %2$s verwendet"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

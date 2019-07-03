@@ -22,7 +22,6 @@
 
 <template>
 	<div id="app-details-view" style="padding: 20px;">
-		<a class="close icon-close" href="#" v-on:click="hideAppDetails"><span class="hidden-visually">Close</span></a>
 		<h2>
 			<div v-if="!app.preview" class="icon-settings-dark"></div>
 			<svg v-if="app.previewAsIcon && app.preview" width="32" height="32" viewBox="0 0 32 32">
@@ -31,7 +30,10 @@
 			</svg>
 			{{ app.name }}</h2>
 		<img v-if="app.screenshot" :src="app.screenshot" width="100%" />
-		<div class="app-level" v-if="app.level === 200 || hasRating">
+		<div class="app-level" v-if="app.level === 300 || app.level === 200 || hasRating">
+			<span class="supported icon-checkmark-color" v-if="app.level === 300"
+				  v-tooltip.auto="t('settings', 'This app is supported via your current Nextcloud subscription.')">
+				{{ t('settings', 'Supported') }}</span>
 			<span class="official icon-checkmark" v-if="app.level === 200"
 			  v-tooltip.auto="t('settings', 'Official apps are developed by and within the community. They offer central functionality and are ready for production use.')">
 				{{ t('settings', 'Official') }}</span>
@@ -62,23 +64,12 @@
 								 :placeholder="t('settings', 'Limit app usage to groups')"
 								 label="name" track-by="id" class="multiselect-vue"
 								 :multiple="true" :close-on-select="false"
-								 @search-change="asyncFindGroup">
+								 :tag-width="60" @search-change="asyncFindGroup">
 						<span slot="noResult">{{t('settings', 'No results')}}</span>
 					</multiselect>
 				</div>
 			</div>
 		</div>
-
-		<p class="documentation">
-			<a class="appslink" :href="appstoreUrl" v-if="!app.internal" target="_blank" rel="noreferrer noopener">{{ t('settings', 'View in store')}} ↗</a>
-
-			<a class="appslink" v-if="app.website" :href="app.website" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Visit website') }} ↗</a>
-			<a class="appslink" v-if="app.bugs" :href="app.bugs" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Report a bug') }} ↗</a>
-
-			<a class="appslink" v-if="app.documentation && app.documentation.user" :href="app.documentation.user" target="_blank" rel="noreferrer noopener">{{ t('settings', 'User documentation') }} ↗</a>
-			<a class="appslink" v-if="app.documentation && app.documentation.admin" :href="app.documentation.admin" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Admin documentation') }} ↗</a>
-			<a class="appslink" v-if="app.documentation && app.documentation.developer" :href="app.documentation.developer" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Developer documentation') }} ↗</a>
-		</p>
 
 		<ul class="app-dependencies">
 			<li v-if="app.missingMinOwnCloudVersion">{{ t('settings', 'This app has no minimum Nextcloud version assigned. This will be an error in the future.') }}</li>
@@ -91,12 +82,23 @@
 			</li>
 		</ul>
 
+		<p class="documentation">
+			<a class="appslink" :href="appstoreUrl" v-if="!app.internal" target="_blank" rel="noreferrer noopener">{{ t('settings', 'View in store')}} ↗</a>
+
+			<a class="appslink" v-if="app.website" :href="app.website" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Visit website') }} ↗</a>
+			<a class="appslink" v-if="app.bugs" :href="app.bugs" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Report a bug') }} ↗</a>
+
+			<a class="appslink" v-if="app.documentation && app.documentation.user" :href="app.documentation.user" target="_blank" rel="noreferrer noopener">{{ t('settings', 'User documentation') }} ↗</a>
+			<a class="appslink" v-if="app.documentation && app.documentation.admin" :href="app.documentation.admin" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Admin documentation') }} ↗</a>
+			<a class="appslink" v-if="app.documentation && app.documentation.developer" :href="app.documentation.developer" target="_blank" rel="noreferrer noopener">{{ t('settings', 'Developer documentation') }} ↗</a>
+		</p>
+
 		<div class="app-description" v-html="renderMarkdown"></div>
 	</div>
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect';
+import { Multiselect } from 'nextcloud-vue';
 import marked from 'marked';
 import dompurify from 'dompurify'
 
@@ -122,14 +124,6 @@ export default {
 		if (this.app.groups.length > 0) {
 			this.groupCheckedAppsData = true;
 		}
-	},
-	methods: {
-		hideAppDetails() {
-			this.$router.push({
-				name: 'apps-category',
-				params: {category: this.category}
-			});
-		},
 	},
 	computed: {
 		appstoreUrl() {

@@ -352,6 +352,7 @@
 			}
 			var $input = $li.find('.linkPassText');
 			$input.removeClass('error');
+			$input.parent().find('input').removeClass('error');
 			var password = $input.val();
 
 			if ($li.find('.linkPassText').attr('placeholder') === PASSWORD_PLACEHOLDER_MESSAGE_OPTIONAL) {
@@ -380,6 +381,9 @@
 					$loading.removeClass('inlineblock').addClass('hidden');
 				},
 				error: function(model, msg) {
+					// Add visual feedback to both the input and the submit button
+					$input.parent().find('input').addClass('error');
+
 					// destroy old tooltips
 					var $container = $input.parent();
 					$container.tooltip('destroy');
@@ -594,8 +598,8 @@
 
 			var minPasswordLength = 4
 			// password policy?
-			if(oc_capabilities.password_policy && oc_capabilities.password_policy.minLength) {
-				minPasswordLength = oc_capabilities.password_policy.minLength;
+			if(OC.getCapabilities().password_policy && OC.getCapabilities().password_policy.minLength) {
+				minPasswordLength = OC.getCapabilities().password_policy.minLength;
 			}
 
 			var popoverBase = {
@@ -874,7 +878,7 @@
 				expireDate = moment(share.expiration, 'YYYY-MM-DD').format('DD-MM-YYYY');
 			}
 
-			var isTalkEnabled = oc_appswebroots['spreed'] !== undefined;
+			var isTalkEnabled = OC.appswebroots['spreed'] !== undefined;
 			var sendPasswordByTalk = share.sendPasswordByTalk;
 
 			var hideDownload = share.hideDownload;

@@ -28,10 +28,19 @@
 
 namespace OC\Core;
 
+use OC\Authentication\Events\RemoteWipeFinished;
+use OC\Authentication\Events\RemoteWipeStarted;
+use OC\Authentication\Listeners\RemoteWipeActivityListener;
+use OC\Authentication\Listeners\RemoteWipeEmailListener;
+use OC\Authentication\Listeners\RemoteWipeNotificationsListener;
+use OC\Authentication\Notifications\Notifier as AuthenticationNotifier;
+use OC\Core\Notification\RemoveLinkSharesNotifier;
 use OC\DB\MissingIndexInformation;
 use OC\DB\SchemaWrapper;
 use OCP\AppFramework\App;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
+use OCP\IServerContainer;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -52,10 +61,31 @@ class Application extends App {
 		});
 
 		$server = $container->getServer();
-		$eventDispatcher = $server->getEventDispatcher();
+		/** @var IEventDispatcher $eventDispatcher */
+		$eventDispatcher = $server->query(IEventDispatcher::class);
+
+		$notificationManager = $server->getNotificationManager();
+		$notificationManager->registerNotifier(function () use ($server) {
+			return new RemoveLinkSharesNotifier(
+				$server->getL10NFactory()
+			);
+		}, function () {
+			return [
+				'id' => 'core',
+				'name' => 'core',
+			];
+		});
+		$notificationManager->registerNotifier(function () use ($server) {
+			return $server->query(AuthenticationNotifier::class);
+		}, function () {
+			return [
+				'id' => 'auth',
+				'name' => 'authentication notifier',
+			];
+		});
 
 		$eventDispatcher->addListener(IDBConnection::CHECK_MISSING_INDEXES_EVENT,
-			function(GenericEvent $event) use ($container) {
+			function (GenericEvent $event) use ($container) {
 				/** @var MissingIndexInformation $subject */
 				$subject = $event->getSubject();
 
@@ -93,7 +123,53 @@ class Application extends App {
 						$subject->addHintForMissingSubject($table->getName(), 'twofactor_providers_uid');
 					}
 				}
+
+				if ($schema->hasTable('login_flow_v2')) {
+					$table = $schema->getTable('login_flow_v2');
+
+					if (!$table->hasIndex('poll_token')) {
+						$subject->addHintForMissingSubject($table->getName(), 'poll_token');
+					}
+					if (!$table->hasIndex('login_token')) {
+						$subject->addHintForMissingSubject($table->getName(), 'login_token');
+					}
+					if (!$table->hasIndex('timestamp')) {
+						$subject->addHintForMissingSubject($table->getName(), 'timestamp');
+					}
+				}
+
+				if ($schema->hasTable('whats_new')) {
+					$table = $schema->getTable('whats_new');
+
+					if (!$table->hasIndex('version')) {
+						$subject->addHintForMissingSubject($table->getName(), 'version');
+					}
+				}
+
+				if ($schema->hasTable('cards')) {
+					$table = $schema->getTable('cards');
+
+					if (!$table->hasIndex('cards_abid')) {
+						$subject->addHintForMissingSubject($table->getName(), 'cards_abid');
+					}
+				}
+
+				if ($schema->hasTable('cards_properties')) {
+					$table = $schema->getTable('cards_properties');
+
+					if (!$table->hasIndex('cards_prop_abid')) {
+						$subject->addHintForMissingSubject($table->getName(), 'cards_prop_abid');
+					}
+				}
 			}
 		);
+
+		$eventDispatcher->addServiceListener(RemoteWipeStarted::class, RemoteWipeActivityListener::class);
+		$eventDispatcher->addServiceListener(RemoteWipeStarted::class, RemoteWipeNotificationsListener::class);
+		$eventDispatcher->addServiceListener(RemoteWipeStarted::class, RemoteWipeEmailListener::class);
+		$eventDispatcher->addServiceListener(RemoteWipeFinished::class, RemoteWipeActivityListener::class);
+		$eventDispatcher->addServiceListener(RemoteWipeFinished::class, RemoteWipeNotificationsListener::class);
+		$eventDispatcher->addServiceListener(RemoteWipeFinished::class, RemoteWipeEmailListener::class);
 	}
+
 }

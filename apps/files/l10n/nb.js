@@ -22,8 +22,10 @@ OC.L10N.register(
     "Not enough free space, you are uploading {size1} but only {size2} is left" : "Ikke nok ledig plass. Du laster opp {size1} men bare {size2} er ledig",
     "Target folder \"{dir}\" does not exist any more" : "Målmappen \"{dir}\" finnes ikke lenger",
     "Not enough free space" : "Ikke nok ledig diskplass",
+    "An unknown error has occurred" : "En ukjent feil oppstod",
     "Uploading …" : "Laster opp…",
     "{loadedSize} of {totalSize} ({bitrate})" : "{loadedSize} av {totalSize} ({bitrate})",
+    "Uploading that item is not supported" : "Opplastning av det elementet er ikke støttet",
     "Target folder does not exist any more" : "Målmappen finnes ikke lenger",
     "Error when assembling chunks, status code {status}" : "Feil under sammenkobling av biter, statuskode {status}",
     "Actions" : "Handlinger",
@@ -131,9 +133,8 @@ OC.L10N.register(
     "Unlimited" : "Ubegrenset",
     "Upload (max. %s)" : "Opplasting (maks %s)",
     "File Management" : "Filbehandling",
-    "%s of %s used" : "%s av %s brukt",
-    "%1$s%% of %2$s used" : "%1$s%% av %2$s brukt",
     "%s used" : "%s brukt",
+    "%1$s of %2$s used" : "%1$s av %2$s brukt",
     "Settings" : "Innstillinger",
     "Show hidden files" : "Vis skjulte filer",
     "WebDAV" : "WebDAV",
@@ -163,7 +164,8 @@ OC.L10N.register(
     "Save" : "Lagre",
     "With PHP-FPM it might take 5 minutes for changes to be applied." : "Med PHP-FPM kan det ta 5 minutter før endringene trer i kraft.",
     "Missing permissions to edit from here." : "Manglende rettigheter til å redigere herfra.",
+    "%s of %s used" : "%s av %s brukt",
     "Cancel upload" : "Avbryt opplasting",
-    "%1$s of %2$s used" : "%1$s av %2$s brukt"
+    "%1$s%% of %2$s used" : "%1$s%% av %2$s brukt"
 },
 "nplurals=2; plural=(n != 1);");

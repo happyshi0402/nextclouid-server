@@ -8,6 +8,9 @@
  *
  */
 
+import ItemTemplate from './templates/item.handlebars';
+import Template from './templates/template.handlebars';
+
 (function() {
 	/**
 	 * @memberof OCA.Versions
@@ -128,11 +131,11 @@
 		},
 
 		template: function(data) {
-			return OCA.Versions.Templates['template'](data);
+			return Template(data);
 		},
 
 		itemTemplate: function(data) {
-			return OCA.Versions.Templates['item'](data);
+			return ItemTemplate(data);
 		},
 
 		setFileInfo: function(fileInfo) {
@@ -153,7 +156,7 @@
 			var preview = OC.MimeType.getIconUrl(version.get('mimetype'));
 			var img = new Image();
 			img.onload = function () {
-				$('li[data-revision=' + version.get('timestamp') + '] .preview').attr('src', version.getPreviewUrl());
+				$('li[data-revision=' + version.get('id') + '] .preview').attr('src', version.getPreviewUrl());
 			};
 			img.src = version.getPreviewUrl();
 

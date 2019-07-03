@@ -40,7 +40,7 @@ use OCP\IURLGenerator;
 use OCP\Lock\ILockingProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Test\TestCase;
 use OC\IntegrityCheck\Checker;
 
@@ -67,7 +67,7 @@ class CheckSetupControllerTest extends TestCase {
 	private $logger;
 	/** @var Checker|\PHPUnit_Framework_MockObject_MockObject */
 	private $checker;
-	/** @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
 	private $dispatcher;
 	/** @var Connection|\PHPUnit_Framework_MockObject_MockObject */
 	private $db;
@@ -105,7 +105,7 @@ class CheckSetupControllerTest extends TestCase {
 			->will($this->returnCallback(function($message, array $replace) {
 				return vsprintf($message, $replace);
 			}));
-		$this->dispatcher = $this->getMockBuilder(EventDispatcher::class)
+		$this->dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
 			->disableOriginalConstructor()->getMock();
 		$this->checker = $this->getMockBuilder('\OC\IntegrityCheck\Checker')
 				->disableOriginalConstructor()->getMock();
@@ -180,7 +180,7 @@ class CheckSetupControllerTest extends TestCase {
 		$this->assertFalse(
 			self::invokePrivate(
 				$this->checkSetupController,
-				'isInternetConnectionWorking'
+				'hasInternetConnectivityProblems'
 			)
 		);
 	}
@@ -206,10 +206,10 @@ class CheckSetupControllerTest extends TestCase {
 			->will($this->returnValue($client));
 
 
-		$this->assertTrue(
+		$this->assertFalse(
 			self::invokePrivate(
 				$this->checkSetupController,
-				'isInternetConnectionWorking'
+				'hasInternetConnectivityProblems'
 			)
 		);
 	}
@@ -235,10 +235,10 @@ class CheckSetupControllerTest extends TestCase {
 			->method('newClient')
 			->will($this->returnValue($client));
 
-		$this->assertFalse(
+		$this->assertTrue(
 			self::invokePrivate(
 				$this->checkSetupController,
-				'isInternetConnectionWorking'
+				'hasInternetConnectivityProblems'
 			)
 		);
 	}
@@ -540,7 +540,7 @@ class CheckSetupControllerTest extends TestCase {
 					'backgroundJobsUrl' => 'https://example.org',
 				],
 				'cronErrors' => [],
-				'serverHasInternetConnection' => false,
+				'serverHasInternetConnectionProblems' => true,
 				'isMemcacheConfigured' => true,
 				'memcacheDocs' => 'http://docs.example.org/server/go.php?to=admin-performance',
 				'isRandomnessSecure' => self::invokePrivate($this->checkSetupController, 'isRandomnessSecure'),

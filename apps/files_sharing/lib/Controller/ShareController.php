@@ -164,7 +164,6 @@ class ShareController extends AuthPublicShareController {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');
 			$csp->addAllowedMediaDomain('blob:');
-			$csp->allowEvalScript(true);
 			$response->setContentSecurityPolicy($csp);
 		}
 
@@ -185,7 +184,6 @@ class ShareController extends AuthPublicShareController {
 			$csp = new ContentSecurityPolicy();
 			$csp->addAllowedConnectDomain('*');
 			$csp->addAllowedMediaDomain('blob:');
-			$csp->allowEvalScript(true);
 			$response->setContentSecurityPolicy($csp);
 		}
 
@@ -414,6 +412,7 @@ class ShareController extends AuthPublicShareController {
 		}
 
 		// Load files we need
+		\OCP\Util::addScript('files', 'semaphore');
 		\OCP\Util::addScript('files', 'file-upload');
 		\OCP\Util::addStyle('files_sharing', 'publicView');
 		\OCP\Util::addScript('files_sharing', 'public');

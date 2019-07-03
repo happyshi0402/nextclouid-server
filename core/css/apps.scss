@@ -358,6 +358,10 @@ kbd {
 			height: 44px;
 			margin: 0;
 			z-index: 110;
+
+			/* Needed for IE11; otherwise the button appears to the right of the
+			 * link. */
+			left: 0;
 		}
 		&:before {
 			position: absolute;
@@ -588,7 +592,7 @@ kbd {
 
 /**
  * !Important. We are defining the minimum requirement we want for flex
- * Just before the mobile breakpoint we have $breakpoint-mobile (768px) - $navigation-width
+ * Just before the mobile breakpoint we have $breakpoint-mobile (1024px) - $navigation-width
  * -> 468px. In that case we want 200px for the list and 268px for the content
  */
 $min-content-width: $breakpoint-mobile - $navigation-width - $list-min-width;
@@ -1118,7 +1122,6 @@ $outter-margin: ($popoveritem-height - $popovericon-size) / 2;
 	.app-content-list-item {
 		position: relative;
 		height: 68px;
-		border-top: 1px solid var(--color-border);
 		cursor: pointer;
 		padding: 10px 7px;
 		display: flex;

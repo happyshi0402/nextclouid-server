@@ -1,4 +1,5 @@
 <?php
+declare (strict_types = 1);
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -36,7 +37,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the app id is invalid
 	 * @since 9.0.0
 	 */
-	public function setApp($app);
+	public function setApp(string $app);
 
 	/**
 	 * @return string
@@ -50,7 +51,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the user id is invalid
 	 * @since 9.0.0
 	 */
-	public function setUser($user);
+	public function setUser(string $user);
 
 	/**
 	 * @return string
@@ -79,7 +80,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the object type or id is invalid
 	 * @since 9.0.0
 	 */
-	public function setObject($type, $id);
+	public function setObject(string $type, $id);
 
 	/**
 	 * @return string
@@ -100,7 +101,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the subject or parameters are invalid
 	 * @since 9.0.0
 	 */
-	public function setSubject($subject, array $parameters = []);
+	public function setSubject(string $subject, array $parameters = []);
 
 	/**
 	 * @return string
@@ -131,7 +132,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the subject is invalid
 	 * @since 9.0.0
 	 */
-	public function setParsedSubject($subject);
+	public function setParsedSubject(string $subject);
 
 	/**
 	 * @return string
@@ -156,7 +157,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the subject or parameters are invalid
 	 * @since 11.0.0
 	 */
-	public function setRichSubject($subject, array $parameters = []);
+	public function setRichSubject(string $subject, array $parameters = []);
 
 	/**
 	 * @return string
@@ -177,7 +178,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the message or parameters are invalid
 	 * @since 9.0.0
 	 */
-	public function setMessage($message, array $parameters = []);
+	public function setMessage(string $message, array $parameters = []);
 
 	/**
 	 * @return string
@@ -208,7 +209,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the message is invalid
 	 * @since 9.0.0
 	 */
-	public function setParsedMessage($message);
+	public function setParsedMessage(string $message);
 
 	/**
 	 * @return string
@@ -233,7 +234,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the message or parameters are invalid
 	 * @since 11.0.0
 	 */
-	public function setRichMessage($message, array $parameters = []);
+	public function setRichMessage(string $message, array $parameters = []);
 
 	/**
 	 * @return string
@@ -253,7 +254,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the link is invalid
 	 * @since 9.0.0
 	 */
-	public function setLink($link);
+	public function setLink(string $link);
 
 	/**
 	 * @return string
@@ -267,7 +268,7 @@ interface INotification {
 	 * @throws \InvalidArgumentException if the icon is invalid
 	 * @since 11.0.0
 	 */
-	public function setIcon($icon);
+	public function setIcon(string $icon);
 
 	/**
 	 * @return string

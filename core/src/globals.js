@@ -19,19 +19,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {initCore} from './init'
+
+const warnIfNotTesting = function() {
+	if (window.TESTING === undefined) {
+		console.warn.apply(console, arguments)
+	}
+}
+
 /**
- * 
+ *
  * @param {Function} func the library to deprecate
  * @param {String} funcName the name of the library
  */
 const deprecate = (func, funcName) => {
 	const oldFunc = func
 	const newFunc = function() {
-		console.warn(`The ${funcName} library is deprecated! It will be removed in nextcloud 19.`)
+		warnIfNotTesting(`The ${funcName} library is deprecated! It will be removed in nextcloud 19.`)
 		return oldFunc.apply(this, arguments)
 	}
 	Object.assign(newFunc, oldFunc)
 	return newFunc
+}
+
+const setDeprecatedProp = (global, cb, msg) => {
+	if (window[global] !== undefined) {
+		delete window[global]
+	}
+	Object.defineProperty(window, global, {
+		get: () => {
+			if (msg) {
+				warnIfNotTesting(`${global} is deprecated: ${msg}`)
+			} else {
+				warnIfNotTesting(`${global} is deprecated`)
+			}
+
+			return cb()
+		}
+	})
 }
 
 import _ from 'underscore'
@@ -69,6 +94,7 @@ import OCP from './OCP/index'
 import OCA from './OCA/index'
 import escapeHTML from './Util/escapeHTML'
 import formatDate from './Util/format-date'
+import {getToken as getRequestToken} from './OC/requesttoken'
 import getURLParameter from './Util/get-url-parameter'
 import humanFileSize from './Util/human-file-size'
 import relative_modified_date from './Util/relative-modified-date'
@@ -91,6 +117,17 @@ window['md5'] = md5
 window['moment'] = moment
 
 window['OC'] = OC
+setDeprecatedProp('initCore', () => initCore, 'this is an internal function')
+setDeprecatedProp('oc_appswebroots', ()  => OC.appswebroots, 'use OC.appswebroots instead')
+setDeprecatedProp('oc_capabilities', OC.getCapabilities, 'use OC.getCapabilities instead')
+setDeprecatedProp('oc_config', () => OC.config, 'use OC.config instead')
+setDeprecatedProp('oc_current_user', () => OC.getCurrentUser().uid, 'use OC.getCurrentUser().uid instead')
+setDeprecatedProp('oc_debug', () => OC.debug, 'use OC.debug instead')
+setDeprecatedProp('oc_defaults', () => OC.theme, 'use OC.theme instead')
+setDeprecatedProp('oc_isadmin', OC.isUserAdmin, 'use OC.isUserAdmin() instead')
+setDeprecatedProp('oc_requesttoken', () => getRequestToken(), 'use OC.requestToken instead')
+setDeprecatedProp('oc_webroot', () => OC.webroot, 'use OC.getRootPath() instead')
+setDeprecatedProp('OCDialogs', () => OC.dialogs, 'use OC.dialogs instead')
 window['OCP'] = OCP
 window['OCA'] = OCA
 window['escapeHTML'] = deprecate(escapeHTML, 'escapeHTML')

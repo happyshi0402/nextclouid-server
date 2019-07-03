@@ -75,6 +75,7 @@
 				$('#owner').val(response.data.owner);
 				$('#ownerDisplayName').val(response.data.ownerDisplayName);
 				Files.displayStorageWarnings();
+				OCA.Files.App.fileList._updateDirectoryPermissions();
 			}
 			if (response[0] === undefined) {
 				return;
@@ -139,7 +140,7 @@
 				throw t('files', 'File name cannot be empty.');
 			} else if (trimmedName.indexOf('/') !== -1) {
 				throw t('files', '"/" is not allowed inside a file name.');
-			} else if (OC.fileIsBlacklisted(trimmedName)) {
+			} else if (!!(trimmedName.match(OC.config.blacklist_files_regex))) {
 				throw t('files', '"{name}" is not an allowed filetype', {name: name});
 			}
 
@@ -154,7 +155,7 @@
 				owner = $('#owner').val(),
 				ownerDisplayName = $('#ownerDisplayName').val();
 			if (usedSpacePercent > 98) {
-				if (owner !== oc_current_user) {
+				if (owner !== OC.getCurrentUser().uid) {
 					OC.Notification.show(t('files', 'Storage of {owner} is full, files can not be updated or synced anymore!',
 						{owner: ownerDisplayName}), {type: 'error'}
 					);
@@ -167,7 +168,7 @@
 				return;
 			}
 			if (usedSpacePercent > 90) {
-				if (owner !== oc_current_user) {
+				if (owner !== OC.getCurrentUser().uid) {
 					OC.Notification.show(t('files', 'Storage of {owner} is almost full ({usedSpacePercent}%)',
 						{
 							usedSpacePercent: usedSpacePercent,

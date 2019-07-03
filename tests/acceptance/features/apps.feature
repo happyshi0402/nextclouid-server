@@ -40,6 +40,7 @@ Feature: apps
     And I see the app bundles
     And I see that the "Enterprise bundle" is disabled
 
+# Enabling an app bundle fails when not all apps have a matching version available
 #  Scenario: Enable an app bundle
 #    Given I act as Jane
 #    And I am logged in as the admin
